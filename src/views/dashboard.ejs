@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Wow u want to do smthing?</h1>
+<%
+function generateRoadmap(data) {
+    let str = "";
+    if(!data.heartbeats) return "Created -> [ABS NO WHERE]"
+    for(let i = 0; i < data.heartbeats.length; i++) {
+        const heartbeat = data.heartbeats[i];
+        if(heartbeat.status === "sent") {
+            str += `<span style="color:green">Sent @ ${heartbeat.time}</span>`
+        } else if(heartbeat.status === "arrived_at_hq") {
+            str += `<span style="color:yellow">Arrived at HQ @ ${heartbeat.time}</span>`
+        } else if (heartbeat.status == "arrived") {
+            str += `<span style="color:green">Arrived @ ${heartbeat.time}</span>`
+        } 
+        else {
+            str += `<span style="color:red">Heartbeat @ ${heartbeat.time}</span>`
+        }
+    }
+}
+%>
+    <div>
+        <h1>Dashboard</h1>
+        <p>create mail,, see the status of such mail,, idfk</p>
+        <div>
+            <h2>lsit of mails ;p</h2>
+            <ul>
+<% for(const item of data) {%>
+<p><%= item.key %></p>
+<div>
+    <p> Going to <%=item.value.slack_id || "Man idfk" %> -- also known as <%= item.value.name_for_mail %></p>
+    <p><b>Roadmap:</b> <%= generateRoadmap(item.value.status) %></p>
+</div>
+    <%}%>
+
+            </ul>
+        </div>
+        <br />
+       <hr />
+        <form action="/create" method="POST" enctype="application/x-www-form-urlencoded">
+            <div>
+                <label for="slack_id">Slack ID</label>
+                <input type="text" name="slack_id" id="slack_id"  />
+            </div>
+            <br />
+            <div>
+                <label for="name_for_mail">Name</label>
+                <input type="text" name="name_for_mail" id="name_for_mail" required />
+            </div>
+            <br />
+            <div>
+                <button type="submit">Create</button>
+            </div>
+            </form>
+    </div>
+</body>
+</html>
