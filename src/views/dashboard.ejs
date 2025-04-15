@@ -9,21 +9,25 @@
     <h1>Wow u want to do smthing?</h1>
 <%
 function generateRoadmap(data) {
+    console.log(data)
     let str = "";
     if(!data.heartbeats) return "Created -> [ABS NO WHERE]"
     for(let i = 0; i < data.heartbeats.length; i++) {
         const heartbeat = data.heartbeats[i];
+        heartbeat.time = new Date(heartbeat.created_at).toISOString().split("T")[0]
         if(heartbeat.status === "sent") {
-            str += `<span style="color:green">Sent @ ${heartbeat.time}</span>`
+            str += `<span style="color:green">Sent @ ${heartbeat.time}</span> -> `
         } else if(heartbeat.status === "arrived_at_hq") {
-            str += `<span style="color:yellow">Arrived at HQ @ ${heartbeat.time}</span>`
+            str += `<span style="color:blueviolet">Arrived at (HQ/middleman) @ ${heartbeat.time}</span> -> `
         } else if (heartbeat.status == "arrived") {
-            str += `<span style="color:green">Arrived @ ${heartbeat.time}</span>`
+            str += `<span style="color:green">Arrived @ ${heartbeat.time}</span> -> `
         } 
         else {
-            str += `<span style="color:red">Heartbeat @ ${heartbeat.time}</span>`
+            str += `<span style="color:red">Heartbeat @ ${heartbeat.time}</span> -> `
         }
     }
+    str += " [ end for now ]"
+    return str;
 }
 %>
     <div>
@@ -33,10 +37,18 @@ function generateRoadmap(data) {
             <h2>lsit of mails ;p</h2>
             <ul>
 <% for(const item of data) {%>
-<p><%= item.key %></p>
+    <hr />
+
+<p><%= item.key %> -- <%= item.value.status %></p>
 <div>
     <p> Going to <%=item.value.slack_id || "Man idfk" %> -- also known as <%= item.value.name_for_mail %></p>
-    <p><b>Roadmap:</b> <%= generateRoadmap(item.value.status) %></p>
+    <p><b>Roadmap:</b> <%- generateRoadmap(item.value) %></p>
+    <br />
+    <a href="/heartbeat-from-nice-postal-worker?id=<%=item.key%>">Create heartbeat (instant)</a>
+    <br />
+    <a href="/middleman/<%=item.key%>">Middleman </a>
+    <br />
+    <a href="/i-got-mail/<%=item.key%>"> Arrived</a>
 </div>
     <%}%>
 
