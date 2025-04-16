@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <!-- shocking moment!! neon uses js -->
+     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
     <h1>Wow u want to do smthing?</h1>
@@ -36,10 +38,10 @@ function generateRoadmap(data) {
         <div>
             <h2>lsit of mails ;p</h2>
             <ul>
-<% for(const item of data) {%>
+<% data.forEach((item,index) => { %>
     <hr />
 
-<p><%= item.key %> -- <%= item.value.status %></p>
+<p><%= item.key %> -- <%= item.value.status %> -- <%= index %></p>
 <div>
     <p> Going to <%=item.value.slack_id || "Man idfk" %> -- also known as <%= item.value.name_for_mail %></p>
     <p><b>Roadmap:</b> <%- generateRoadmap(item.value) %></p>
@@ -49,8 +51,21 @@ function generateRoadmap(data) {
     <a href="/middleman/<%=item.key%>">Middleman </a>
     <br />
     <a href="/i-got-mail/<%=item.key%>"> Arrived</a>
+    <br />    <br />
+    <a href="/sent?id=<%=item.key%>"> Mark as sent (instant)</a>
+    <br />
+    <a href="/remove/?id=<%=item.key%>"> Remove this</a>
+<div>
+    <h2>Qr Code Images</h2>
+    <div>
+        <% for(const img of qrCodes[index]) { %>
+            <img src="<%=img%>" />
+        <%}%>
+    </div>
+    <span>middleman, heartbeat, i-got-mail</span>
 </div>
-    <%}%>
+</div>
+    <%})%>
 
             </ul>
         </div>

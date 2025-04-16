@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from 'express';
 import KeyvSqlite from '@keyv/sqlite';
 import Keyv from 'keyv';
+import QRCode from 'qrcode';
 import { randomUUID } from "crypto";
 async function getAll() {
     const items = []
@@ -74,6 +75,15 @@ app.get('/i-got-mail/:id', (req,res) => {
 const id = req.params.id
 res.render('confirm', { id })
 })
+app.get("/remove", authed, async (req,res) => {
+    const id = req.query.id
+    res.render('confirm', { id })
+})
+app.post('/remove/confirm',authed, async  (req,res) => {
+    const id = req.body.id
+    await db.delete(id)
+    res.redirect(`/dashboard`)
+})
 app.post('/i-got-mail/confirm',async  (req,res) => {
     const id = req.body.id
     const item = await db.get(id)
@@ -112,7 +122,18 @@ app.get('/heartbeat-from-nice-postal-worker',async  (req,res) => {
     await db.set(id, item)
     res.send(`Thanks postal worker! your heartbeat has been sent`)
 })
-
+app.get('/sent', authed, async (req,res) => {
+    const id = req.query.id
+    const item = await db.get(id)
+    item.status = "sent"
+    
+    sendToSlack({
+        channel: process.env.SLACK_CHANNEL,
+        text: `Package ${item.name_for_mail} (${id}) has been marked as sent to recipient`
+    })
+    await db.set(id, item)
+    res.redirect(`/dashboard?id=${id}`)
+})
 app.post('/create', authed, (req,res) => {
 const id = randomUUID()
 db.set(id,{
@@ -135,8 +156,33 @@ res.redirect(`/dashboard?id=${id}`)
 
 // getAll().then(console.log)
 // rs here
+const imageTemplatesQR = [{
+    image: `https://cachet.dunkirk.sh/emojis/nora/r`,   
+}, {
+    image: `https://cachet.dunkirk.sh/emojis/tw_package/r`
+}, {
+    image: undefined
+}]
 app.get('/dashboard', authed, async (req,res) => {
-    res.render('dashboard', { data: (await getAll() || [])  })
+    // generate qr codes moment
+    const qrCodes = []
+    const qrCodes0 = await Promise.all(await getAll().then(async items => {
+        return await Promise.all(items.map(item => {
+            let cImages = Array.from(imageTemplatesQR)
+            cImages[0].text = `https://hackclub-mail-tracker.saahild.com/middleman/${item.key}` 
+            cImages[1].text = `https://hackclub-mail-tracker.saahild.com/heartbeat-from-nice-postal-worker?id=${item.key}`
+            cImages[2].text = `https://hackclub-mail-tracker.saahild.com/i-got-mail/${item.key}`
+           return cImages.map(c => QRCode.toDataURL(c.text, { errorCorrectionLevel: 'H', margin: 0, scale: 10, width: 70, height: 70 }))
+        }))
+    }))
+    for(let i = 0; i < qrCodes0.length; i++) {
+       qrCodes[i] = []
+       for(let j = 0; j < qrCodes0[i].length; j++) {
+           qrCodes[i].push(await qrCodes0[i][j])
+       }
+    }
+    console.log(qrCodes)
+    res.render('dashboard', { data: (await getAll() || []), qrCodes  })
 })
 // db.get("meow")
 app.listen(process.env.PORT || 3000, () => {
