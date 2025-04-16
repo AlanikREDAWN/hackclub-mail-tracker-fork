@@ -4,6 +4,7 @@ import KeyvSqlite from '@keyv/sqlite';
 import Keyv from 'keyv';
 import QRCode from 'qrcode';
 import { randomUUID } from "crypto";
+import { dirname } from "path";
 async function getAll() {
     const items = []
     for await (const [key, value] of db.iterator()) {
@@ -32,7 +33,7 @@ const keyvSqlite = new KeyvSqlite('sqlite://database.db');
 // keyvSqlite.en 
 const db = new Keyv({ store: keyvSqlite  });
 function authed(req,res,next) {
-    if (req.headers.authorization !== process.env.AUTH_TOKEN && req.query.token !== process.env.AUTH_TOKEN && !req.headers["Cookie"].includes(process.env.AUTH_TOKEN)) {
+    if (req.headers.authorization !== process.env.AUTH_TOKEN && req.query.token !== process.env.AUTH_TOKEN && !(( req.headers["Cookie"]||"").includes(process.env.AUTH_TOKEN))) {
         res.status(401).send("Unauthorized");
         return;
     }
@@ -40,7 +41,7 @@ function authed(req,res,next) {
 }
 app.get('/', (req,res) => {
     // res.send("meow:3")
-    res.sendFile(import.meta.dirname + `/assets/${Math.random()>.5?"nora-mail":"zeon_shake"}.gif`)
+    res.sendFile(dirname(import.meta.filename) + `/assets/${Math.random()>.5?"nora-mail":"zeon_shake"}.gif`)
 })
 app.get('/middleman/:id',async  (req,res) => {
 // meow meow
