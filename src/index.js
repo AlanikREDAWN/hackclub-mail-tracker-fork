@@ -27,7 +27,7 @@ function sendToSlack(messageObj) {
 }
 const app = express();
 app.set('view engine', 'ejs');
-app.set("views", import.meta.dirname + "/views");
+app.set("views", process.cwd() + "/views");
 app.use(express.urlencoded({ extended: true }));
 const keyvSqlite = new KeyvSqlite('sqlite://database.db');
 // keyvSqlite.en 
@@ -41,7 +41,7 @@ function authed(req,res,next) {
 }
 app.get('/', (req,res) => {
     // res.send("meow:3")
-    res.sendFile(dirname(import.meta.filename) + `/assets/${Math.random()>.5?"nora-mail":"zeon_shake"}.gif`)
+    res.sendFile(process.cwd() + `/assets/${Math.random()>.5?"nora-mail":"zeon_shake"}.gif`)
 })
 app.get('/middleman/:id',async  (req,res) => {
 // meow meow
