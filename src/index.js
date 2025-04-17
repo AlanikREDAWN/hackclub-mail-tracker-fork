@@ -36,7 +36,8 @@ function authed(req, res, next) {
   if (
     req.headers.authorization !== process.env.AUTH_TOKEN &&
     req.query.token !== process.env.AUTH_TOKEN &&
-    (!(req.headers["Cookie"] || "").includes(process.env.AUTH_TOKEN) && !req.headers.Cookie.includes(encodeURIComponent(process.env.AUTH_TOKEN)))
+    !(req.headers["Cookie"] || "").includes(process.env.AUTH_TOKEN) &&
+    !req.headers.Cookie.includes(encodeURIComponent(process.env.AUTH_TOKEN))
   ) {
     res.status(401).send("Unauthorized");
     return;
