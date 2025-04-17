@@ -5,6 +5,7 @@ import Keyv from "keyv";
 import QRCode from "qrcode";
 import { randomUUID } from "crypto";
 import { dirname } from "path";
+import session from "express-session";
 async function getAll() {
   const items = [];
   for await (const [key, value] of db.iterator()) {
@@ -28,6 +29,7 @@ function sendToSlack(messageObj) {
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", process.cwd() + "/src/views");
+app.use(session({ secret: "secret"+Date.now(), resave: false, saveUninitialized: false }));
 app.use(express.urlencoded({ extended: true }));
 const keyvSqlite = new KeyvSqlite("sqlite://database.db");
 // keyvSqlite.en
@@ -39,13 +41,17 @@ function authed(req, res, next) {
     !(req.headers["Cookie"] || "").includes(process.env.AUTH_TOKEN) &&
     !(req.headers["Cookie"] || "").includes(
       encodeURIComponent(process.env.AUTH_TOKEN),
-    )
+    ) && req.session.token !== process.env.AUTH_TOKEN
   ) {
     res.status(401).send("Unauthorized");
     return;
   }
   next();
 }
+app.all('/token_set', (req,res) => {
+    req.session.token = req.body ? req.body.token : req.query.token
+    res.send("ok")
+})
 app.get("/", (req, res) => {
   // res.send("meow:3")
   res.sendFile(
