@@ -198,9 +198,9 @@ app.get("/dashboard", authed, async (req, res) => {
       return await Promise.all(
         items.map((item) => {
           let cImages = Array.from(imageTemplatesQR);
-          cImages[0].text = `https://hackclub-mail-tracker.saahild.com/middleman/${item.key}`;
-          cImages[1].text = `https://hackclub-mail-tracker.saahild.com/heartbeat-from-nice-postal-worker?id=${item.key}`;
-          cImages[2].text = `https://hackclub-mail-tracker.saahild.com/i-got-mail/${item.key}`;
+          cImages[0].text = `https://hackclub-mail-tracker.kittycat.hackclub.app/middleman/${item.key}`;
+          cImages[1].text = `https://hackclub-mail-tracker.kittycat.hackclub.app/heartbeat-from-nice-postal-worker?id=${item.key}`;
+          cImages[2].text = `https://hackclub-mail-tracker.kittycat.hackclub.app/i-got-mail/${item.key}`;
           return cImages.map((c) =>
             QRCode.toDataURL(c.text, {
               errorCorrectionLevel: "H",
