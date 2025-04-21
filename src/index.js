@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
   // res.send("meow:3")
   res.sendFile(
     process.cwd() +
-      `/src/assets/${Math.random() > 0.5 ? "nora-mail" : "zeon_shake"}.gif`,
+      `/src/assets/${Math.random() > 0.5 ? "nora-mail" : "royal_teddy_shake"}.gif`,
   );
 });
 app.get("/middleman/:id", async (req, res) => {
@@ -198,9 +198,9 @@ app.get("/dashboard", authed, async (req, res) => {
       return await Promise.all(
         items.map((item) => {
           let cImages = Array.from(imageTemplatesQR);
-          cImages[0].text = `https://hackclub-mail-tracker.saahild.com/middleman/${item.key}`;
-          cImages[1].text = `https://hackclub-mail-tracker.saahild.com/heartbeat-from-nice-postal-worker?id=${item.key}`;
-          cImages[2].text = `https://hackclub-mail-tracker.saahild.com/i-got-mail/${item.key}`;
+          cImages[0].text = `https://mail-tracker.lilia.rocks/middleman/${item.key}`;
+          cImages[1].text = `https://mail-tracker.lilia.rocks/heartbeat-from-nice-postal-worker?id=${item.key}`;
+          cImages[2].text = `https://mail-tracker.lilia.rocks/i-got-mail/${item.key}`;
           return cImages.map((c) =>
             QRCode.toDataURL(c.text, {
               errorCorrectionLevel: "H",
