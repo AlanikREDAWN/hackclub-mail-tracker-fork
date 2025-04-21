@@ -167,11 +167,11 @@ app.post("/create", authed, (req, res) => {
   });
   sendToSlack({
     channel: process.env.SLACK_CHANNEL,
-    text: `Neon has created a new mail for you. Please send it to <@${req.body.slack_id}> soon :3`,
+    text: `Lilia (KittyCat) has created a new mail for you. Please send it to <@${req.body.slack_id}> soon :3`,
   });
   sendToSlack({
     channel: req.body.slack_id,
-    text: `Hey neon is planning on sending mail or whatever "${req.body.name_for_mail}" is so i recommend contacting them if u dont want allat..`,
+    text: `Hey Lilia (KittyCat) is planning on sending mail or whatever "${req.body.name_for_mail}" is so i recommend contacting them if u dont want anything..`,
   });
   // res.json({ id })
   res.redirect(`/dashboard?id=${id}`);
