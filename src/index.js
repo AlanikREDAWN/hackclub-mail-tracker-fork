@@ -171,7 +171,7 @@ app.post("/create", authed, (req, res) => {
   });
   sendToSlack({
     channel: req.body.slack_id,
-    text: `Hey Lilia (KittyCat) is planning on sending to you! Yes you: ${req.body.name_for_mail}! if you don't want it, let KittyCat know, so she can send it to someone who does`,
+    text: `Hey! I'm is planning on sending mail to you! Yes you: ${req.body.name_for_mail}! if you don't want it, let me know, so she can send it to someone who does`,
   });
   // res.json({ id })
   res.redirect(`/dashboard?id=${id}`);
