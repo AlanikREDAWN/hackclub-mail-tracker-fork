@@ -169,10 +169,10 @@ app.post("/create", authed, (req, res) => {
     channel: process.env.SLACK_CHANNEL,
     text: `Lilia (KittyCat) has created a new mail for you. Please send it to <@${req.body.slack_id}> soon :3`,
   });
-  sendToSlack({
-    channel: req.body.slack_id,
-    text: `Hey! Lilia (KittyCat) is planning on sending mail to you! Yes you: ${req.body.name_for_mail}! if you don't want it, let her know, so she can send it to someone who does`,
-  });
+  // sendToSlack({
+  //   channel: req.body.slack_id,
+  //   text: `Hey! Lilia (KittyCat) is planning on sending mail to you! Yes you: ${req.body.name_for_mail}! if you don't want it, let her know, so she can send it to someone who does`,
+  // });
   // res.json({ id })
   res.redirect(`/dashboard?id=${id}`);
 });
@@ -198,9 +198,9 @@ app.get("/dashboard", authed, async (req, res) => {
       return await Promise.all(
         items.map((item) => {
           let cImages = Array.from(imageTemplatesQR);
-          cImages[0].text = `https://mail-tracker.lilia.rocks/middleman/${item.key}`;
-          cImages[1].text = `https://mail-tracker.lilia.rocks/heartbeat-from-nice-postal-worker?id=${item.key}`;
-          cImages[2].text = `https://mail-tracker.lilia.rocks/i-got-mail/${item.key}`;
+          cImages[0].text = `https://hackclub-mail-tracker-fork-production.up.railway.app/middleman/${item.key}`;
+          cImages[1].text = `https://hackclub-mail-tracker-fork-production.up.railway.app/heartbeat-from-nice-postal-worker?id=${item.key}`;
+          cImages[2].text = `https://hackclub-mail-tracker-fork-production.up.railway.app/i-got-mail/${item.key}`;
           return cImages.map((c) =>
             QRCode.toDataURL(c.text, {
               errorCorrectionLevel: "H",
